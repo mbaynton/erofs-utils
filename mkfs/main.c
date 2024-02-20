@@ -122,7 +122,7 @@ static void usage(void)
 	      " --max-extent-bytes=#  set maximum decompressed extent size # in bytes\n"
 	      " --preserve-mtime      keep per-file modification time strictly\n"
 	      " --aufs                replace aufs special files with overlayfs metadata\n"
-	      " --tar=[fi]            generate an image from tarball(s)\n"
+	      " --tar=[fih]           generate an image from tarball(s) or tarball header data\n"
 	      " --ovlfs-strip=[01]    strip overlayfs metadata in the target image (e.g. whiteouts)\n"
 	      " --quiet               quiet execution (do not write anything to standard output.)\n"
 #ifndef NDEBUG
@@ -514,11 +514,13 @@ static int mkfs_parse_options_cfg(int argc, char *argv[])
 			cfg.c_extra_ea_name_prefixes = true;
 			break;
 		case 20:
-			if (optarg && (!strcmp(optarg, "i") ||
-				!strcmp(optarg, "0") || !memcmp(optarg, "0,", 2))) {
+			if (optarg && (!strcmp(optarg, "i") || (!strcmp(optarg, "h") ||
+				!strcmp(optarg, "0") || !memcmp(optarg, "0,", 2)))) {
 				erofstar.index_mode = true;
 				if (!memcmp(optarg, "0,", 2))
 					erofstar.mapfile = strdup(optarg + 2);
+				if (!strcmp(optarg, "h"))
+					erofstar.headeronly_mode = true;
 			}
 			tar_mode = true;
 			break;
